@@ -40,6 +40,13 @@ int main(int argc, char** argv){
 	}
 	namedWindow("Raw image", 0);
 	imshow("Raw image", img);
+	Mat hsvimg(img.size(), CV_32FC3);
+	cvtColor(img, hsvimg, CV_RGB2HSV, 1);
+	Mat pimg(img.size(), CV_32FC1);
+	int from_to[] = {0,0}; //value channel extraction
+	mixChannels(&hsvimg, 1, &pimg, 1, from_to, 1);
+	namedWindow("Processed image", 0);
+	imshow("Processed image", pimg);
 	waitKey();
 	return 0;
 }
