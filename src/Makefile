@@ -1,9 +1,9 @@
 
 
 LIBS = -lcv -lcxcore -lhighgui
-CFLAGS = -Wall $(LIBS)
+CFLAGS = -Wall -g $(LIBS)
 
-all: algotest-build testrun
+all: algotest-build
 
 
 algotest-build: algotest.c

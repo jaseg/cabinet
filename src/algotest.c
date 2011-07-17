@@ -17,6 +17,7 @@
  */
 
 #include <iostream>
+#include <cstdio> //for printf()
 #include "opencv/cv.h"
 #include "opencv/highgui.h"
 
@@ -40,11 +41,15 @@ int main(int argc, char** argv){
 	}
 	namedWindow("Raw image", 0);
 	imshow("Raw image", img);
-	Mat hsvimg(img.size(), CV_32FC3);
+	printf("   img: %d*%d, type %d ch %d\n", img.rows, img.cols, img.type(), img.channels());
+	Mat hsvimg(img.size(), CV_8UC3);
+	printf("hsvimg: %d*%d, type %d ch %d\n", hsvimg.rows, hsvimg.cols, hsvimg.type(), hsvimg.channels());
 	cvtColor(img, hsvimg, CV_RGB2HSV, 1);
-	Mat pimg(img.size(), CV_32FC1);
-	int from_to[] = {0,0}; //value channel extraction
+	Mat pimg(img.size(), CV_8UC1);
+	printf("  pimg: %d*%d, type %d ch %d\n", pimg.rows, pimg.cols, pimg.type(), pimg.channels());
+	int from_to[] = {2,0}; //value channel extraction
 	mixChannels(&hsvimg, 1, &pimg, 1, from_to, 1);
+
 	namedWindow("Processed image", 0);
 	imshow("Processed image", pimg);
 	waitKey();
