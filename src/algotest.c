@@ -38,7 +38,7 @@ int main(int argc, char** argv){
 		cout<<"Could not properly read the image file (does it exist? Is $PWD correct? etc... Exiting now."<<endl;
 		return 1;
 	}
-	//namedWindow("Raw image");
+	namedWindow("Raw image", 0);
 	imshow("Raw image", img);
 	waitKey();
 	return 0;
