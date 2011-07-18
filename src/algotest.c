@@ -39,27 +39,35 @@ int main(int argc, char** argv){
 		cout<<"Could not properly read the image file (does it exist? Is $PWD correct? etc... Exiting now."<<endl;
 		return 1;
 	}
-	namedWindow("Raw image", 0);
-	imshow("Raw image", img);
 
-	Mat fltimg(img.size(), CV_32FC3);
-	img.convertTo(fltimg, fltimg.type());
+	Mat hsvimg(img.size(), CV_8UC3);
+	cvtColor(img, hsvimg, CV_RGB2HSV, 1);
 
-	Mat hsvimg(img.size(), CV_32FC3);
-	cvtColor(fltimg, hsvimg, CV_RGB2HSV, 1);
-
-	Mat pimg(img.size(), CV_32FC1);
+	Mat pimg(img.size(), CV_8UC1);
 	int from_to[] = {2,0}; //value channel extraction
 	mixChannels(&hsvimg, 1, &pimg, 1, from_to, 1);
 
-	Mat thrimg(img.size(), CV_32FC1);
-	adaptiveThreshold(pimg, thrimg, 1, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 10, 128);
+	Mat thrimg(img.size(), CV_8UC1);
+	adaptiveThreshold(pimg, thrimg, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 23, -23);
+	
+	GaussianBlur(thrimg, pimg, Size(23, 23), 2.3, 2.3);
 
-	Mat displayimg(img.size(), CV_8UC1);
-	thrimg.convertTo(displayimg, displayimg.type());
+	Mat newthrimg(img.size(), CV_8UC1);
+	adaptiveThreshold(pimg, newthrimg, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 23, -42);
 
-	namedWindow("Processed image", 0);
-	imshow("Processed image", displayimg);
+	Mat displayimg(img.size(), CV_8UC3);
+	int chmux[] = {0,0, 0,1, 0,2};
+	mixChannels(&newthrimg, 1, &displayimg, 1, chmux, 3);
+	vector<Vec4i> lines;
+	HoughLinesP(newthrimg, lines, 1, CV_PI/180, 42, 42, 13);
+	for(vector<Vec4i>::iterator i = lines.begin(); i<lines.end(); i++){
+		line(displayimg, Point((*i)[0], (*i)[1]), Point((*i)[2], (*i)[3]), Scalar(0, 255, 0), 5);
+	}
+
+	namedWindow("displayimg", 0);
+	imshow("displayimg", displayimg);
+	namedWindow("newthrimg", 0);
+	imshow("newthrimg", newthrimg);
 	waitKey();
 	return 0;
 }

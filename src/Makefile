@@ -3,10 +3,10 @@
 LIBS = -lcv -lcxcore -lhighgui
 CFLAGS = -Wall -g $(LIBS)
 
-all: algotest-build
+all: algotest
 
 
-algotest-build: algotest.c
+algotest: algotest.c
 	g++ $(CFLAGS) -o algotest algotest.c
 
 
