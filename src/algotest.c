@@ -41,17 +41,25 @@ int main(int argc, char** argv){
 	}
 	namedWindow("Raw image", 0);
 	imshow("Raw image", img);
-	printf("   img: %d*%d, type %d ch %d\n", img.rows, img.cols, img.type(), img.channels());
-	Mat hsvimg(img.size(), CV_8UC3);
-	printf("hsvimg: %d*%d, type %d ch %d\n", hsvimg.rows, hsvimg.cols, hsvimg.type(), hsvimg.channels());
-	cvtColor(img, hsvimg, CV_RGB2HSV, 1);
-	Mat pimg(img.size(), CV_8UC1);
-	printf("  pimg: %d*%d, type %d ch %d\n", pimg.rows, pimg.cols, pimg.type(), pimg.channels());
+
+	Mat fltimg(img.size(), CV_32FC3);
+	img.convertTo(fltimg, fltimg.type());
+
+	Mat hsvimg(img.size(), CV_32FC3);
+	cvtColor(fltimg, hsvimg, CV_RGB2HSV, 1);
+
+	Mat pimg(img.size(), CV_32FC1);
 	int from_to[] = {2,0}; //value channel extraction
 	mixChannels(&hsvimg, 1, &pimg, 1, from_to, 1);
 
+	Mat thrimg(img.size(), CV_32FC1);
+	adaptiveThreshold(pimg, thrimg, 1, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 10, 128);
+
+	Mat displayimg(img.size(), CV_8UC1);
+	thrimg.convertTo(displayimg, displayimg.type());
+
 	namedWindow("Processed image", 0);
-	imshow("Processed image", pimg);
+	imshow("Processed image", displayimg);
 	waitKey();
 	return 0;
 }
